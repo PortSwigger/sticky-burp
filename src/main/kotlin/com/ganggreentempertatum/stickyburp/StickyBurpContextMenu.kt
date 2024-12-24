@@ -1,3 +1,5 @@
+@file:Suppress("CyclomaticComplexMethod")
+
 package com.ganggreentempertatum.stickyburp
 
 import burp.api.montoya.ui.Selection
