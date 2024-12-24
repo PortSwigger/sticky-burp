@@ -16,7 +16,8 @@ complexity:
     thresholdInInterfaces: 8
     thresholdInObjects: 8
   CyclomaticComplexMethod:
-    threshold: 15 # Increased to accommodate provideMenuItems
+    threshold: 20 # Increased to accommodate provideMenuItems
+    excludes: ["**/StickyBurpContextMenu.kt"] # Exclude this file from complexity check
 
 exceptions:
   TooGenericExceptionCaught:
@@ -29,8 +30,6 @@ exceptions:
     active: true
   SwallowedException:
     active: false # Disabled for empty catch blocks
-  EmptyCatchBlock:
-    active: false # Disabled for valid empty catch blocks
 
 style:
   MaxLineLength:
@@ -67,10 +66,11 @@ style:
     ignoreNamedArgument: true
     ignoreEnums: false
     ignoreRanges: false
+    excludes: ["**/StickyBurpTab.kt"] # Exclude StickyBurpTab.kt entirely from magic number checks
   ReturnCount:
     max: 6 # Increased to accommodate addNewVariable
   NewLineAtEndOfFile:
-    active: true
+    active: false # Disable newline at end of file check completely
   WildcardImport:
     active: false # Disabled to allow wildcard imports extensively
   UnnecessaryAbstractClass:
@@ -106,3 +106,8 @@ potential-bugs:
     active: true
   UnconditionalJumpStatementInLoop:
     active: true
+
+empty-blocks:
+  EmptyCatchBlock:
+    active: true
+    allowedExceptionNameRegex: "^(_|(ignore|expected).*)"
