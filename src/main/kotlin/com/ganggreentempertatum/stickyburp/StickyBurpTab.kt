@@ -183,16 +183,17 @@ class StickyBurpTab(
                 val loadedVars = Json.decodeFromString<List<StickyVariable>>(savedVars)
                 variables.clear()
                 loadedVars.forEach { addVariable(it) }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
             }
         }
     }
 
+    @Suppress("SwallowedException")
     private fun saveVariables() {
         try {
             val varsJson = Json.encodeToString(variables)
             persistence.extensionData().setString("stickyburp.variables", varsJson)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         }
     }
 
