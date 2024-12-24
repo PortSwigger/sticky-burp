@@ -1,12 +1,30 @@
+build:
+  maxIssues: 0
+  weights:
+    complexity: 2
+    style: 1
+
 complexity:
   LongParameterList:
-    functionThreshold: 6
-    constructorThreshold: 7
+    functionThreshold: 5
+    constructorThreshold: 6
   TooManyFunctions:
-    thresholdInFiles: 11
-    thresholdInClasses: 11
-    thresholdInInterfaces: 11
-    thresholdInObjects: 11
+    thresholdInFiles: 10
+    thresholdInClasses: 10
+    thresholdInInterfaces: 8
+    thresholdInObjects: 8
+  CyclomaticComplexMethod:
+    threshold: 10
+
+exceptions:
+  TooGenericExceptionCaught:
+    active: true
+  ExceptionRaisedInUnexpectedLocation:
+    active: true
+  PrintStackTrace:
+    active: true
+  ThrowingExceptionsWithoutMessageOrCause:
+    active: true
 
 style:
   MaxLineLength:
@@ -28,20 +46,10 @@ style:
     active: true
   WildcardImport:
     active: true
-
-formatting:
-  active: true
-  android: false
-  autoCorrect: true
-
-  AnnotationOnSeparateLine:
+  UnnecessaryAbstractClass:
     active: true
-    autoCorrect: true
-
-  Indentation:
+  UnusedPrivateMember:
     active: true
-    autoCorrect: true
-    indentSize: 4
 
 naming:
   active: true
@@ -55,3 +63,19 @@ naming:
     constantPattern: "[A-Z][A-Z0-9]*(_[A-Z0-9]+)*"
     propertyPattern: "[A-Za-z][_A-Za-z0-9]*"
     privatePropertyPattern: "_?[A-Za-z][_A-Za-z0-9]*"
+
+comments:
+  active: true
+  excludes: ["**/test/**", "**/androidTest/**", "**/jvmTest/**"]
+  CommentOverPrivateFunction:
+    active: true
+  CommentOverPrivateProperty:
+    active: true
+
+potential-bugs:
+  Deprecation:
+    active: true
+  EqualsAlwaysReturnsTrueOrFalse:
+    active: true
+  UnconditionalJumpStatementInLoop:
+    active: true
