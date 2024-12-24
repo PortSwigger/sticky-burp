@@ -1,4 +1,20 @@
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+
 [*.{kt,kts}]
 indent_size=4
 insert_final_newline=true
 max_line_length=120
+# Common kotlin rules
+ktlint_code_style = official
+
+[*.kts]
+# Disable specific rules for Kotlin script files
+ktlint_standard_no-unused-imports = disabled
+ktlint_standard_multiline-expression-wrapping = disabled
+ktlint_standard_wrapping = disabled
+ktlint_standard_string-template-indent = disabled
+ktlint_standard_final-newline = disabled
