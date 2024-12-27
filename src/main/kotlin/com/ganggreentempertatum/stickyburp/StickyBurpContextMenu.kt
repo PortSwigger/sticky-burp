@@ -7,6 +7,8 @@ import burp.api.montoya.core.ByteArray
 import burp.api.montoya.ui.contextmenu.ContextMenuEvent
 import burp.api.montoya.ui.contextmenu.ContextMenuItemsProvider
 import burp.api.montoya.ui.contextmenu.InvocationType
+import burp.api.montoya.core.ToolType
+import burp.api.montoya.core.ToolSource
 import burp.api.montoya.logging.Logging
 import javax.swing.*
 import burp.api.montoya.http.message.requests.HttpRequest
@@ -77,17 +79,24 @@ class StickyBurpContextMenu(private val tab: StickyBurpTab, private val logging:
             val source = if (messageEditor.isPresent) {
                 val reqRes = messageEditor.get().requestResponse()
                 val tool = when (event.invocationType()) {
+                    InvocationType.SITE_MAP_TREE,
+                    InvocationType.SITE_MAP_TABLE -> "Target"
                     InvocationType.PROXY_HISTORY,
-                    InvocationType.PROXY_INTERCEPT,
+                    InvocationType.PROXY_INTERCEPT -> "Proxy"
                     InvocationType.MESSAGE_VIEWER_REQUEST,
-                    InvocationType.MESSAGE_VIEWER_RESPONSE -> "Proxy"
+                    InvocationType.MESSAGE_VIEWER_RESPONSE -> {
+                        // Get tool type from the event using isFromTool
+                        when {
+                            event.isFromTool(ToolType.TARGET) -> "Target"
+                            event.isFromTool(ToolType.LOGGER) -> "Logger"
+                            else -> "Proxy"  // Default to Proxy for backwards compatibility
+                        }
+                    }
                     InvocationType.INTRUDER_PAYLOAD_POSITIONS,
                     InvocationType.INTRUDER_ATTACK_RESULTS -> "Intruder"
                     InvocationType.SCANNER_RESULTS -> "Scanner"
                     InvocationType.MESSAGE_EDITOR_REQUEST,
                     InvocationType.MESSAGE_EDITOR_RESPONSE -> "Repeater"
-                    InvocationType.SITE_MAP_TREE,
-                    InvocationType.SITE_MAP_TABLE -> "Site Map"
                     InvocationType.SEARCH_RESULTS -> "Search"
                     else -> "Other"
                 }
@@ -174,17 +183,24 @@ class StickyBurpContextMenu(private val tab: StickyBurpTab, private val logging:
                     ?: return@addActionListener
 
                 val tool = when (event.invocationType()) {
+                    InvocationType.SITE_MAP_TREE,
+                    InvocationType.SITE_MAP_TABLE -> "Target"
                     InvocationType.PROXY_HISTORY,
-                    InvocationType.PROXY_INTERCEPT,
+                    InvocationType.PROXY_INTERCEPT -> "Proxy"
                     InvocationType.MESSAGE_VIEWER_REQUEST,
-                    InvocationType.MESSAGE_VIEWER_RESPONSE -> "Proxy"
+                    InvocationType.MESSAGE_VIEWER_RESPONSE -> {
+                        // Get tool type from the event using isFromTool
+                        when {
+                            event.isFromTool(ToolType.TARGET) -> "Target"
+                            event.isFromTool(ToolType.LOGGER) -> "Logger"
+                            else -> "Proxy"  // Default to Proxy for backwards compatibility
+                        }
+                    }
                     InvocationType.INTRUDER_PAYLOAD_POSITIONS,
                     InvocationType.INTRUDER_ATTACK_RESULTS -> "Intruder"
                     InvocationType.SCANNER_RESULTS -> "Scanner"
                     InvocationType.MESSAGE_EDITOR_REQUEST,
                     InvocationType.MESSAGE_EDITOR_RESPONSE -> "Repeater"
-                    InvocationType.SITE_MAP_TREE,
-                    InvocationType.SITE_MAP_TABLE -> "Site Map"
                     InvocationType.SEARCH_RESULTS -> "Search"
                     else -> "Other"
                 }
