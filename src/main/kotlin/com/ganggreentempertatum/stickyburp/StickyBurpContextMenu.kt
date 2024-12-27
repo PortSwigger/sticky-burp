@@ -101,9 +101,20 @@ class StickyBurpContextMenu(private val tab: StickyBurpTab, private val logging:
                 }
 
                 val source = buildString {
-                    append("HTTP ${reqRes.request().method()} ${reqRes.request().url()}")
+                    val request = reqRes.request()
+                    val service = request.httpService()
+
+                    append("HTTP ${request.method()} ${request.url()}")
+                    append(" (${service.host()}:${service.port()})")
+                    if (service.secure()) append(" [HTTPS]")
+
                     if (context.isNotEmpty()) {
                         append(" ($context)")
+                    }
+
+                    val notes = reqRes.annotations().notes()
+                    if (notes != "") {
+                        append(" - Note: $notes")
                     }
                 }
 
@@ -111,7 +122,8 @@ class StickyBurpContextMenu(private val tab: StickyBurpTab, private val logging:
                     name = trimmedName,
                     value = selectedText,
                     sourceTab = tool,
-                    source = source
+                    source = source,
+                    timestamp = java.time.LocalDateTime.now().toString()
                 ))
             } else {
                 "Manual Selection"
@@ -183,9 +195,20 @@ class StickyBurpContextMenu(private val tab: StickyBurpTab, private val logging:
                 }
 
                 val source = buildString {
-                    append("HTTP ${reqRes.request().method()} ${reqRes.request().url()}")
+                    val request = reqRes.request()
+                    val service = request.httpService()
+
+                    append("HTTP ${request.method()} ${request.url()}")
+                    append(" (${service.host()}:${service.port()})")
+                    if (service.secure()) append(" [HTTPS]")
+
                     if (context.isNotEmpty()) {
                         append(" ($context)")
+                    }
+
+                    val notes = reqRes.annotations().notes()
+                    if (notes != "") {
+                        append(" - Note: $notes")
                     }
                 }
 
@@ -193,7 +216,8 @@ class StickyBurpContextMenu(private val tab: StickyBurpTab, private val logging:
                     name = varName,
                     value = selectedText,
                     sourceTab = tool,
-                    source = source
+                    source = source,
+                    timestamp = java.time.LocalDateTime.now().toString()
                 ))
             }
             updateMenu.add(updateItem)

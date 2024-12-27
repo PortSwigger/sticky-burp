@@ -21,10 +21,10 @@ class StickyBurpTab(
     private val persistence: Persistence
 ) : JPanel() {
     private val tableModel: DefaultTableModel = object : DefaultTableModel(
-        arrayOf("Name", "Value", "Source Tab", "Source", "Notes"),
+        arrayOf("Name", "Value", "Source Tab", "Source", "Timestamp", "Notes"),
         0
     ) {
-        override fun isCellEditable(row: Int, column: Int): Boolean = column == 4
+        override fun isCellEditable(row: Int, column: Int): Boolean = column == 5
     }
 
     private fun extractColor(source: String): Color? {
@@ -135,13 +135,13 @@ class StickyBurpTab(
             }
         })
 
-        t.getColumnModel().getColumn(4).cellEditor = DefaultCellEditor(JTextField())
+        t.getColumnModel().getColumn(5).cellEditor = DefaultCellEditor(JTextField())
 
         t.addPropertyChangeListener { evt ->
             if ("tableCellEditor" == evt.propertyName) {
                 val row = t.editingRow
                 val col = t.editingColumn
-                if (row != -1 && col == 4) {
+                if (row != -1 && col == 5) {
                     val notes = t.getValueAt(row, col)?.toString() ?: ""
                     val variable = variables[row]
                     variables[row] = variable.copy(notes = notes)
@@ -214,6 +214,7 @@ class StickyBurpTab(
             variable.value,
             variable.sourceTab,
             variable.source,
+            variable.timestamp,
             variable.notes
         ))
         variables.add(variable)
@@ -237,7 +238,8 @@ class StickyBurpTab(
         tableModel.setValueAt(variable.value, index, 1)
         tableModel.setValueAt(variable.sourceTab, index, 2)
         tableModel.setValueAt(variable.source, index, 3)
-        tableModel.setValueAt(variable.notes, index, 4)
+        tableModel.setValueAt(variable.timestamp, index, 4)
+        tableModel.setValueAt(variable.notes, index, 5)
     }
 
     private fun updateSelectedVariable() {
