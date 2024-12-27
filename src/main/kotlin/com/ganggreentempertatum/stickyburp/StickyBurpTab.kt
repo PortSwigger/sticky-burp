@@ -261,7 +261,11 @@ class StickyBurpTab(
             return
         }
 
-        val updatedVariable = currentVariable.copy(value = trimmedValue, source = "Manual Update")
+        val updatedVariable = currentVariable.copy(
+            value = trimmedValue,
+            source = "Manual Update",
+            sourceTab = currentVariable.sourceTab
+        )
         variables[selectedRow] = updatedVariable
         updateTableRow(selectedRow, updatedVariable)
         saveVariables()

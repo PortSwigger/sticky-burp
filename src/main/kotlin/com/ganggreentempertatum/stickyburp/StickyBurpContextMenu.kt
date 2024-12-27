@@ -158,10 +158,42 @@ class StickyBurpContextMenu(private val tab: StickyBurpTab, private val logging:
             val updateItem = JMenuItem(varName)
             updateItem.addActionListener {
                 val reqRes = event.messageEditorRequestResponse().get().requestResponse()
+                val tool = when (event.invocationType()) {
+                    InvocationType.PROXY_HISTORY,
+                    InvocationType.PROXY_INTERCEPT,
+                    InvocationType.MESSAGE_VIEWER_REQUEST,
+                    InvocationType.MESSAGE_VIEWER_RESPONSE -> "Proxy"
+                    InvocationType.INTRUDER_PAYLOAD_POSITIONS,
+                    InvocationType.INTRUDER_ATTACK_RESULTS -> "Intruder"
+                    InvocationType.SCANNER_RESULTS -> "Scanner"
+                    InvocationType.MESSAGE_EDITOR_REQUEST,
+                    InvocationType.MESSAGE_EDITOR_RESPONSE -> "Repeater"
+                    InvocationType.SITE_MAP_TREE,
+                    InvocationType.SITE_MAP_TABLE -> "Site Map"
+                    InvocationType.SEARCH_RESULTS -> "Search"
+                    else -> "Other"
+                }
+
+                val context = when (event.invocationType()) {
+                    InvocationType.PROXY_HISTORY -> "History"
+                    InvocationType.PROXY_INTERCEPT -> "Intercept"
+                    InvocationType.INTRUDER_PAYLOAD_POSITIONS -> "Payload Positions"
+                    InvocationType.INTRUDER_ATTACK_RESULTS -> "Attack Results"
+                    else -> ""
+                }
+
+                val source = buildString {
+                    append("HTTP ${reqRes.request().method()} ${reqRes.request().url()}")
+                    if (context.isNotEmpty()) {
+                        append(" ($context)")
+                    }
+                }
+
                 tab.addVariable(StickyVariable(
                     name = varName,
                     value = selectedText,
-                    source = "HTTP ${reqRes.request().method()} ${reqRes.request().url()}"
+                    sourceTab = tool,
+                    source = source
                 ))
             }
             updateMenu.add(updateItem)
