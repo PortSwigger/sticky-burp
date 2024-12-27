@@ -6,8 +6,8 @@ import burp.api.montoya.ui.Selection
 import burp.api.montoya.core.ByteArray
 import burp.api.montoya.ui.contextmenu.ContextMenuEvent
 import burp.api.montoya.ui.contextmenu.ContextMenuItemsProvider
+import burp.api.montoya.ui.contextmenu.InvocationType
 import burp.api.montoya.logging.Logging
-import burp.api.montoya.ui.contextmenu.InvocationType.*
 import javax.swing.*
 import burp.api.montoya.http.message.requests.HttpRequest
 import burp.api.montoya.http.message.responses.HttpResponse
@@ -24,7 +24,7 @@ class StickyBurpContextMenu(private val tab: StickyBurpTab, private val logging:
         val selection = editor.selectionOffsets()
         if (!selection.isPresent) return emptyList()
 
-        val selectedText = if (event.isFrom(MESSAGE_EDITOR_REQUEST, MESSAGE_VIEWER_REQUEST)) {
+        val selectedText = if (event.isFrom(InvocationType.MESSAGE_EDITOR_REQUEST, InvocationType.MESSAGE_VIEWER_REQUEST)) {
             val request = editor.requestResponse().request()
             val range = selection.get()
             request.toByteArray().subArray(range).toString()
@@ -76,16 +76,58 @@ class StickyBurpContextMenu(private val tab: StickyBurpTab, private val logging:
 
             val source = if (messageEditor.isPresent) {
                 val reqRes = messageEditor.get().requestResponse()
-                "HTTP ${reqRes.request().method()} ${reqRes.request().url()}"
+                val tool = when (event.invocationType()) {
+                    InvocationType.PROXY_HISTORY,
+                    InvocationType.PROXY_INTERCEPT,
+                    InvocationType.MESSAGE_VIEWER_REQUEST,
+                    InvocationType.MESSAGE_VIEWER_RESPONSE -> "Proxy"
+                    InvocationType.INTRUDER_PAYLOAD_POSITIONS,
+                    InvocationType.INTRUDER_ATTACK_RESULTS -> "Intruder"
+                    InvocationType.SCANNER_RESULTS -> "Scanner"
+                    InvocationType.MESSAGE_EDITOR_REQUEST,
+                    InvocationType.MESSAGE_EDITOR_RESPONSE -> "Repeater"
+                    InvocationType.SITE_MAP_TREE,
+                    InvocationType.SITE_MAP_TABLE -> "Site Map"
+                    InvocationType.SEARCH_RESULTS -> "Search"
+                    else -> "Other"
+                }
+
+                val context = when (event.invocationType()) {
+                    InvocationType.PROXY_HISTORY -> "History"
+                    InvocationType.PROXY_INTERCEPT -> "Intercept"
+                    InvocationType.INTRUDER_PAYLOAD_POSITIONS -> "Payload Positions"
+                    InvocationType.INTRUDER_ATTACK_RESULTS -> "Attack Results"
+                    else -> ""
+                }
+
+                val source = buildString {
+                    val request = reqRes.request()
+                    val service = request.httpService()
+
+                    append("HTTP ${request.method()} ${request.url()}")
+                    append(" (${service.host()}:${service.port()})")
+                    if (service.secure()) append(" [HTTPS]")
+
+                    if (context.isNotEmpty()) {
+                        append(" ($context)")
+                    }
+
+                    val notes = reqRes.annotations().notes()
+                    if (notes != "") {
+                        append(" - Note: $notes")
+                    }
+                }
+
+                tab.addVariable(StickyVariable(
+                    name = trimmedName,
+                    value = selectedText,
+                    sourceTab = tool,
+                    source = source,
+                    timestamp = java.time.LocalDateTime.now().toString()
+                ))
             } else {
                 "Manual Selection"
             }
-
-            tab.addVariable(StickyVariable(
-                name = trimmedName,
-                value = selectedText,
-                source = source
-            ))
         }
         mainMenu.add(addItem)
 
@@ -96,7 +138,7 @@ class StickyBurpContextMenu(private val tab: StickyBurpTab, private val logging:
                 val range = selection.get()
                 val reqRes = editor.requestResponse()
 
-                if (event.isFrom(MESSAGE_EDITOR_REQUEST, MESSAGE_VIEWER_REQUEST)) {
+                if (event.isFrom(InvocationType.MESSAGE_EDITOR_REQUEST, InvocationType.MESSAGE_VIEWER_REQUEST)) {
                     val request = reqRes.request()
                     val newRequest = HttpRequest.httpRequest(
                         request.httpService(),
@@ -128,10 +170,56 @@ class StickyBurpContextMenu(private val tab: StickyBurpTab, private val logging:
             val updateItem = JMenuItem(varName)
             updateItem.addActionListener {
                 val reqRes = event.messageEditorRequestResponse().get().requestResponse()
-                tab.addVariable(StickyVariable(
-                    name = varName,
+                val existingVar = tab.getVariables().find { it.name == varName }
+                    ?: return@addActionListener
+
+                val tool = when (event.invocationType()) {
+                    InvocationType.PROXY_HISTORY,
+                    InvocationType.PROXY_INTERCEPT,
+                    InvocationType.MESSAGE_VIEWER_REQUEST,
+                    InvocationType.MESSAGE_VIEWER_RESPONSE -> "Proxy"
+                    InvocationType.INTRUDER_PAYLOAD_POSITIONS,
+                    InvocationType.INTRUDER_ATTACK_RESULTS -> "Intruder"
+                    InvocationType.SCANNER_RESULTS -> "Scanner"
+                    InvocationType.MESSAGE_EDITOR_REQUEST,
+                    InvocationType.MESSAGE_EDITOR_RESPONSE -> "Repeater"
+                    InvocationType.SITE_MAP_TREE,
+                    InvocationType.SITE_MAP_TABLE -> "Site Map"
+                    InvocationType.SEARCH_RESULTS -> "Search"
+                    else -> "Other"
+                }
+
+                val context = when (event.invocationType()) {
+                    InvocationType.PROXY_HISTORY -> "History"
+                    InvocationType.PROXY_INTERCEPT -> "Intercept"
+                    InvocationType.INTRUDER_PAYLOAD_POSITIONS -> "Payload Positions"
+                    InvocationType.INTRUDER_ATTACK_RESULTS -> "Attack Results"
+                    else -> ""
+                }
+
+                val source = buildString {
+                    val request = reqRes.request()
+                    val service = request.httpService()
+
+                    append("HTTP ${request.method()} ${request.url()}")
+                    append(" (${service.host()}:${service.port()})")
+                    if (service.secure()) append(" [HTTPS]")
+
+                    if (context.isNotEmpty()) {
+                        append(" ($context)")
+                    }
+
+                    val notes = reqRes.annotations().notes()
+                    if (notes != "") {
+                        append(" - Note: $notes")
+                    }
+                }
+
+                tab.addVariable(existingVar.copy(
                     value = selectedText,
-                    source = "HTTP ${reqRes.request().method()} ${reqRes.request().url()}"
+                    sourceTab = tool,
+                    source = source,
+                    timestamp = java.time.LocalDateTime.now().toString()
                 ))
             }
             updateMenu.add(updateItem)
