@@ -6,8 +6,8 @@ import burp.api.montoya.ui.Selection
 import burp.api.montoya.core.ByteArray
 import burp.api.montoya.ui.contextmenu.ContextMenuEvent
 import burp.api.montoya.ui.contextmenu.ContextMenuItemsProvider
+import burp.api.montoya.ui.contextmenu.InvocationType
 import burp.api.montoya.logging.Logging
-import burp.api.montoya.ui.contextmenu.InvocationType.*
 import javax.swing.*
 import burp.api.montoya.http.message.requests.HttpRequest
 import burp.api.montoya.http.message.responses.HttpResponse
@@ -24,7 +24,7 @@ class StickyBurpContextMenu(private val tab: StickyBurpTab, private val logging:
         val selection = editor.selectionOffsets()
         if (!selection.isPresent) return emptyList()
 
-        val selectedText = if (event.isFrom(MESSAGE_EDITOR_REQUEST, MESSAGE_VIEWER_REQUEST)) {
+        val selectedText = if (event.isFrom(InvocationType.MESSAGE_EDITOR_REQUEST, InvocationType.MESSAGE_VIEWER_REQUEST)) {
             val request = editor.requestResponse().request()
             val range = selection.get()
             request.toByteArray().subArray(range).toString()
@@ -76,7 +76,22 @@ class StickyBurpContextMenu(private val tab: StickyBurpTab, private val logging:
 
             val source = if (messageEditor.isPresent) {
                 val reqRes = messageEditor.get().requestResponse()
-                "HTTP ${reqRes.request().method()} ${reqRes.request().url()}"
+                val toolName = when (event.invocationType()) {
+                    InvocationType.MESSAGE_EDITOR_REQUEST -> "Message Editor Request"
+                    InvocationType.MESSAGE_EDITOR_RESPONSE -> "Message Editor Response"
+                    InvocationType.MESSAGE_VIEWER_REQUEST -> "Message Viewer Request"
+                    InvocationType.MESSAGE_VIEWER_RESPONSE -> "Message Viewer Response"
+                    InvocationType.SITE_MAP_TREE -> "Site Map Tree"
+                    InvocationType.SITE_MAP_TABLE -> "Site Map Table"
+                    InvocationType.PROXY_HISTORY -> "Proxy History"
+                    InvocationType.PROXY_INTERCEPT -> "Proxy Intercept"
+                    InvocationType.SCANNER_RESULTS -> "Scanner Results"
+                    InvocationType.INTRUDER_PAYLOAD_POSITIONS -> "Intruder Payload Positions"
+                    InvocationType.INTRUDER_ATTACK_RESULTS -> "Intruder Attack Results"
+                    InvocationType.SEARCH_RESULTS -> "Search Results"
+                    else -> "Other"
+                }
+                "$toolName - ${reqRes.request().method()} ${reqRes.request().url()}"
             } else {
                 "Manual Selection"
             }
@@ -96,7 +111,7 @@ class StickyBurpContextMenu(private val tab: StickyBurpTab, private val logging:
                 val range = selection.get()
                 val reqRes = editor.requestResponse()
 
-                if (event.isFrom(MESSAGE_EDITOR_REQUEST, MESSAGE_VIEWER_REQUEST)) {
+                if (event.isFrom(InvocationType.MESSAGE_EDITOR_REQUEST, InvocationType.MESSAGE_VIEWER_REQUEST)) {
                     val request = reqRes.request()
                     val newRequest = HttpRequest.httpRequest(
                         request.httpService(),
