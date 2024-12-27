@@ -76,27 +76,42 @@ class StickyBurpContextMenu(private val tab: StickyBurpTab, private val logging:
 
             val source = if (messageEditor.isPresent) {
                 val reqRes = messageEditor.get().requestResponse()
-                val sourceTab = when (event.invocationType()) {
-                    InvocationType.MESSAGE_EDITOR_REQUEST -> "Message Editor Request"
-                    InvocationType.MESSAGE_EDITOR_RESPONSE -> "Message Editor Response"
-                    InvocationType.MESSAGE_VIEWER_REQUEST -> "Message Viewer Request"
-                    InvocationType.MESSAGE_VIEWER_RESPONSE -> "Message Viewer Response"
-                    InvocationType.SITE_MAP_TREE -> "Site Map Tree"
-                    InvocationType.SITE_MAP_TABLE -> "Site Map Table"
-                    InvocationType.PROXY_HISTORY -> "Proxy History"
-                    InvocationType.PROXY_INTERCEPT -> "Proxy Intercept"
-                    InvocationType.SCANNER_RESULTS -> "Scanner Results"
-                    InvocationType.INTRUDER_PAYLOAD_POSITIONS -> "Intruder Payload Positions"
-                    InvocationType.INTRUDER_ATTACK_RESULTS -> "Intruder Attack Results"
-                    InvocationType.SEARCH_RESULTS -> "Search Results"
+                val tool = when (event.invocationType()) {
+                    InvocationType.PROXY_HISTORY,
+                    InvocationType.PROXY_INTERCEPT,
+                    InvocationType.MESSAGE_VIEWER_REQUEST,
+                    InvocationType.MESSAGE_VIEWER_RESPONSE -> "Proxy"
+                    InvocationType.INTRUDER_PAYLOAD_POSITIONS,
+                    InvocationType.INTRUDER_ATTACK_RESULTS -> "Intruder"
+                    InvocationType.SCANNER_RESULTS -> "Scanner"
+                    InvocationType.MESSAGE_EDITOR_REQUEST,
+                    InvocationType.MESSAGE_EDITOR_RESPONSE -> "Repeater"
+                    InvocationType.SITE_MAP_TREE,
+                    InvocationType.SITE_MAP_TABLE -> "Site Map"
+                    InvocationType.SEARCH_RESULTS -> "Search"
                     else -> "Other"
+                }
+
+                val context = when (event.invocationType()) {
+                    InvocationType.PROXY_HISTORY -> "History"
+                    InvocationType.PROXY_INTERCEPT -> "Intercept"
+                    InvocationType.INTRUDER_PAYLOAD_POSITIONS -> "Payload Positions"
+                    InvocationType.INTRUDER_ATTACK_RESULTS -> "Attack Results"
+                    else -> ""
+                }
+
+                val source = buildString {
+                    append("HTTP ${reqRes.request().method()} ${reqRes.request().url()}")
+                    if (context.isNotEmpty()) {
+                        append(" ($context)")
+                    }
                 }
 
                 tab.addVariable(StickyVariable(
                     name = trimmedName,
                     value = selectedText,
-                    sourceTab = sourceTab,
-                    source = "HTTP ${reqRes.request().method()} ${reqRes.request().url()}"
+                    sourceTab = tool,
+                    source = source
                 ))
             } else {
                 "Manual Selection"
