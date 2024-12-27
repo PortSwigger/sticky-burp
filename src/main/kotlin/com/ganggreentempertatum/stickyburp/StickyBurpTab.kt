@@ -20,8 +20,11 @@ class StickyBurpTab(
     private val variables: MutableList<StickyVariable>,
     private val persistence: Persistence
 ) : JPanel() {
-    private val tableModel: DefaultTableModel = object : DefaultTableModel(arrayOf("Name", "Value", "Source", "Notes"), 0) {
-        override fun isCellEditable(row: Int, column: Int): Boolean = column == 3
+    private val tableModel: DefaultTableModel = object : DefaultTableModel(
+        arrayOf("Name", "Value", "Source Tab", "Source", "Notes"),
+        0
+    ) {
+        override fun isCellEditable(row: Int, column: Int): Boolean = column == 4
     }
 
     private fun extractColor(source: String): Color? {
@@ -132,13 +135,13 @@ class StickyBurpTab(
             }
         })
 
-        t.getColumnModel().getColumn(3).cellEditor = DefaultCellEditor(JTextField())
+        t.getColumnModel().getColumn(4).cellEditor = DefaultCellEditor(JTextField())
 
         t.addPropertyChangeListener { evt ->
             if ("tableCellEditor" == evt.propertyName) {
                 val row = t.editingRow
                 val col = t.editingColumn
-                if (row != -1 && col == 3) {
+                if (row != -1 && col == 4) {
                     val notes = t.getValueAt(row, col)?.toString() ?: ""
                     val variable = variables[row]
                     variables[row] = variable.copy(notes = notes)
@@ -209,6 +212,7 @@ class StickyBurpTab(
         tableModel.addRow(arrayOf(
             variable.name,
             variable.value,
+            variable.sourceTab,
             variable.source,
             variable.notes
         ))
@@ -231,8 +235,9 @@ class StickyBurpTab(
     private fun updateTableRow(index: Int, variable: StickyVariable) {
         tableModel.setValueAt(variable.name, index, 0)
         tableModel.setValueAt(variable.value, index, 1)
-        tableModel.setValueAt(variable.source, index, 2)
-        tableModel.setValueAt(variable.notes, index, 3)
+        tableModel.setValueAt(variable.sourceTab, index, 2)
+        tableModel.setValueAt(variable.source, index, 3)
+        tableModel.setValueAt(variable.notes, index, 4)
     }
 
     private fun updateSelectedVariable() {

@@ -76,7 +76,7 @@ class StickyBurpContextMenu(private val tab: StickyBurpTab, private val logging:
 
             val source = if (messageEditor.isPresent) {
                 val reqRes = messageEditor.get().requestResponse()
-                val toolName = when (event.invocationType()) {
+                val sourceTab = when (event.invocationType()) {
                     InvocationType.MESSAGE_EDITOR_REQUEST -> "Message Editor Request"
                     InvocationType.MESSAGE_EDITOR_RESPONSE -> "Message Editor Response"
                     InvocationType.MESSAGE_VIEWER_REQUEST -> "Message Viewer Request"
@@ -91,16 +91,16 @@ class StickyBurpContextMenu(private val tab: StickyBurpTab, private val logging:
                     InvocationType.SEARCH_RESULTS -> "Search Results"
                     else -> "Other"
                 }
-                "$toolName - ${reqRes.request().method()} ${reqRes.request().url()}"
+
+                tab.addVariable(StickyVariable(
+                    name = trimmedName,
+                    value = selectedText,
+                    sourceTab = sourceTab,
+                    source = "HTTP ${reqRes.request().method()} ${reqRes.request().url()}"
+                ))
             } else {
                 "Manual Selection"
             }
-
-            tab.addVariable(StickyVariable(
-                name = trimmedName,
-                value = selectedText,
-                source = source
-            ))
         }
         mainMenu.add(addItem)
 

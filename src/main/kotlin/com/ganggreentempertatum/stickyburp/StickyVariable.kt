@@ -7,5 +7,6 @@ data class StickyVariable(
     val name: String,
     val value: String,
     val source: String,
+    val sourceTab: String = "",
     val notes: String = ""
 )
