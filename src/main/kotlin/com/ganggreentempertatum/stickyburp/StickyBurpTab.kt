@@ -21,7 +21,7 @@ class StickyBurpTab(
     private val persistence: Persistence
 ) : JPanel() {
     private val tableModel: DefaultTableModel = object : DefaultTableModel(
-        arrayOf("Name", "Value", "Source Tab", "Source", "Timestamp", "Notes"),
+        arrayOf("Sticky Name", "Sticky Value", "Source Tab", "Source Meta", "Source Timestamp", "Sticky Notes"),
         0
     ) {
         override fun isCellEditable(row: Int, column: Int): Boolean = column == 5
