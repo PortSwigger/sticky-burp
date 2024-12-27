@@ -170,7 +170,6 @@ class StickyBurpContextMenu(private val tab: StickyBurpTab, private val logging:
             val updateItem = JMenuItem(varName)
             updateItem.addActionListener {
                 val reqRes = event.messageEditorRequestResponse().get().requestResponse()
-                // Get the existing variable to preserve its notes
                 val existingVar = tab.getVariables().find { it.name == varName }
                     ?: return@addActionListener
 
