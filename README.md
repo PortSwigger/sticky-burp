@@ -56,7 +56,7 @@ A Burp Suite extension written in Kotlin that allows you to create and manage "s
   - Right-click selected text to create new stickies
   - Quick access to update existing stickies
   - Source tracking shows which HTTP request the stickies came from
-  - Works in Burp tools (Proxy, Repeater, etc.)
+  - Works in Burp tools for both HTTP Requests and Responses (Proxy, Repeater, Target (Site Map) etc.)
 
 - **Dedicated UI Tab**
   - Table view of all stored stickies
