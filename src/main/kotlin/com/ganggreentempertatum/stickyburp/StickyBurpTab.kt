@@ -20,8 +20,11 @@ class StickyBurpTab(
     private val variables: MutableList<StickyVariable>,
     private val persistence: Persistence
 ) : JPanel() {
-    private val tableModel: DefaultTableModel = object : DefaultTableModel(arrayOf("Name", "Value", "Source", "Notes"), 0) {
-        override fun isCellEditable(row: Int, column: Int): Boolean = column == 3
+    private val tableModel: DefaultTableModel = object : DefaultTableModel(
+        arrayOf("Sticky Name", "Sticky Value", "Source Tab", "Source Meta", "Source Timestamp", "Sticky Notes"),
+        0
+    ) {
+        override fun isCellEditable(row: Int, column: Int): Boolean = column == 5
     }
 
     private fun extractColor(source: String): Color? {
@@ -132,13 +135,13 @@ class StickyBurpTab(
             }
         })
 
-        t.getColumnModel().getColumn(3).cellEditor = DefaultCellEditor(JTextField())
+        t.getColumnModel().getColumn(5).cellEditor = DefaultCellEditor(JTextField())
 
         t.addPropertyChangeListener { evt ->
             if ("tableCellEditor" == evt.propertyName) {
                 val row = t.editingRow
                 val col = t.editingColumn
-                if (row != -1 && col == 3) {
+                if (row != -1 && col == 5) {
                     val notes = t.getValueAt(row, col)?.toString() ?: ""
                     val variable = variables[row]
                     variables[row] = variable.copy(notes = notes)
@@ -209,7 +212,9 @@ class StickyBurpTab(
         tableModel.addRow(arrayOf(
             variable.name,
             variable.value,
+            variable.sourceTab,
             variable.source,
+            variable.timestamp,
             variable.notes
         ))
         variables.add(variable)
@@ -231,8 +236,10 @@ class StickyBurpTab(
     private fun updateTableRow(index: Int, variable: StickyVariable) {
         tableModel.setValueAt(variable.name, index, 0)
         tableModel.setValueAt(variable.value, index, 1)
-        tableModel.setValueAt(variable.source, index, 2)
-        tableModel.setValueAt(variable.notes, index, 3)
+        tableModel.setValueAt(variable.sourceTab, index, 2)
+        tableModel.setValueAt(variable.source, index, 3)
+        tableModel.setValueAt(variable.timestamp, index, 4)
+        tableModel.setValueAt(variable.notes, index, 5)
     }
 
     private fun updateSelectedVariable() {
@@ -256,7 +263,11 @@ class StickyBurpTab(
             return
         }
 
-        val updatedVariable = currentVariable.copy(value = trimmedValue, source = "Manual Update")
+        val updatedVariable = currentVariable.copy(
+            value = trimmedValue,
+            source = "Manual Update",
+            sourceTab = currentVariable.sourceTab
+        )
         variables[selectedRow] = updatedVariable
         updateTableRow(selectedRow, updatedVariable)
         saveVariables()

@@ -7,10 +7,8 @@ insert_final_newline = true
 [*.{kt,kts}]
 indent_size = 4
 insert_final_newline = true
-max_line_length = 150  # Increased to avoid line length issues
+max_line_length=150
 ktlint_code_style = ktlint_official
-# TODO
-# Disable problematic rules for all Kotlin files
 ktlint_standard = enabled
 ktlint_standard_no-unused-imports = disabled
 ktlint_standard_multiline-expression-wrapping = disabled
@@ -20,12 +18,12 @@ ktlint_standard_final-newline = disabled
 ktlint_standard_trailing-comma-on-call-site = disabled
 ktlint_standard_trailing-comma-on-declaration-site = disabled
 ktlint_standard_argument-list-wrapping = disabled
-ktlint_standard_max-line-length = disabled
 ktlint_standard_function-signature = disabled
 ktlint_standard_statement-wrapping = disabled
 ktlint_standard_blank-line-before-declaration = disabled
 ktlint_standard_import-ordering = disabled
 ktlint_standard_no-wildcard-imports = disabled
+ktlint_standard_no-multi-spaces = disabled
 
 [*.kts]
 # Additional specific rules for Kotlin script files
