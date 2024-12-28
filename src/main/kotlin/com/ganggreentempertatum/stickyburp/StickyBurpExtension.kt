@@ -9,6 +9,9 @@ class StickyBurpExtension : BurpExtension {
         val tab = StickyBurpTab(variables, api.persistence())
         val contextMenu = StickyBurpContextMenu(tab, api.logging())
 
+        val keyboardHandler = KeyboardShortcutHandler(api)
+        keyboardHandler.register()
+
         api.userInterface().apply {
             registerSuiteTab("StickyBurp", tab)
             registerContextMenuItemsProvider(contextMenu)
@@ -19,5 +22,7 @@ class StickyBurpExtension : BurpExtension {
 
         api.extension().setName("StickyBurp")
         api.logging().logToOutput("StickyBurp extension loaded successfully!\n\n\nBrought to you with love by GangGreentempertatum <3\n")
+
+        api.extension().registerUnloadingHandler { keyboardHandler.unregister() }
     }
 }
