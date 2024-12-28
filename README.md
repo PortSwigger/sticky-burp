@@ -71,6 +71,9 @@ A Burp Suite extension written in Kotlin that allows you to create and manage "s
   - Protection against duplicate stickies names
   - Validation to prevent empty values
 
+- **Hotkeys/Shortcuts**
+  - Automatically triggers the "CMD"("Control" for Windows users)+"Shift"+"S" to switch to the tab
+
 ## Demo
 
 ![stickyburp v1.0.0 in action](public/gifs/stickyburp.gif)
