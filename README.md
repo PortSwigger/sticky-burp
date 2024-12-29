@@ -74,7 +74,8 @@ A Burp Suite extension written in Kotlin that allows you to create and manage "s
 - **Hotkeys/Shortcuts** (**No more clicks!**)
   - Automatically switch to the StickyBurp tab using "`CMD`"("`Control`" for Windows users)+"`Shift`"+"`S`"
 
-
+![stickyburp hotkeys demo](public/gifs/stickyburp-hotkey.gif)
+*stickyburp hotkeys demo*
 
 ## Demo
 
