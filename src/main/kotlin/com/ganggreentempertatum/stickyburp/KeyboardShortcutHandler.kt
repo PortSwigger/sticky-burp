@@ -3,25 +3,50 @@ package com.ganggreentempertatum.stickyburp
 import burp.api.montoya.MontoyaApi
 import java.awt.AWTEvent
 import java.awt.Component
+import java.awt.Container
 import java.awt.Toolkit
 import java.awt.Window
 import java.awt.event.AWTEventListener
+import java.awt.event.InputEvent
 import java.awt.event.KeyEvent
 import javax.swing.JFrame
 import javax.swing.JTabbedPane
 import javax.swing.SwingUtilities
 
-class KeyboardShortcutHandler(
-    private val api: MontoyaApi
-) {
+class KeyboardShortcutHandler(private val api: MontoyaApi) {
     private var keyEventListener: AWTEventListener? = null
     private var isCleanedUp = false
 
     fun register() {
         try {
             keyEventListener = AWTEventListener { event ->
-                if (event is KeyEvent) {
-                    handleKeyEvent(event)
+                if (event is KeyEvent && event.id == KeyEvent.KEY_PRESSED) {
+                    val isMac = System.getProperty("os.name").lowercase().contains("mac")
+                    val modifiersEx = event.modifiersEx
+
+                    // Check for Command (Mac) or Control (Windows/Linux) + Shift + S
+                    val isCommandOrControl = if (isMac) {
+                        (modifiersEx and InputEvent.META_DOWN_MASK) != 0
+                    } else {
+                        (modifiersEx and InputEvent.CTRL_DOWN_MASK) != 0
+                    }
+
+                    val isShiftDown = (modifiersEx and InputEvent.SHIFT_DOWN_MASK) != 0
+                    val isSKey = event.keyCode == KeyEvent.VK_S
+
+                    if (isCommandOrControl && isShiftDown && isSKey) {
+                        api.logging().logToOutput("""
+                            Hotkey detected!
+                            Platform: ${if (isMac) "Mac" else "Windows/Linux"}
+                            Modifiers: ${getModifiersText(modifiersEx)}
+                            Key: ${KeyEvent.getKeyText(event.keyCode)}
+                        """.trimIndent())
+
+                        event.consume()
+                        SwingUtilities.invokeLater {
+                            findAndSelectStickyBurpTab()
+                        }
+                    }
                 }
             }
 
@@ -34,23 +59,14 @@ class KeyboardShortcutHandler(
         }
     }
 
-    private fun handleKeyEvent(event: KeyEvent) {
-        if (isCtrlShiftSPressed(event)) {
-            api.logging().logToOutput("!!! CTRL+SHIFT+S Detected !!!")
-            event.consume()
-            SwingUtilities.invokeLater {
-                findAndSelectStickyBurpTab()
-            }
-        }
+    private fun getModifiersText(modifiers: Int): String {
+        val text = StringBuilder()
+        if ((modifiers and InputEvent.SHIFT_DOWN_MASK) != 0) text.append("Shift+")
+        if ((modifiers and InputEvent.CTRL_DOWN_MASK) != 0) text.append("Ctrl+")
+        if ((modifiers and InputEvent.META_DOWN_MASK) != 0) text.append("Meta+")
+        if ((modifiers and InputEvent.ALT_DOWN_MASK) != 0) text.append("Alt+")
+        return if (text.isEmpty()) "none" else text.substring(0, text.length - 1)
     }
-
-    private fun isCtrlShiftSPressed(event: KeyEvent): Boolean =
-        !event.isConsumed &&
-            event.id == KeyEvent.KEY_PRESSED &&
-            event.keyCode == KeyEvent.VK_S &&
-            event.isControlDown &&
-            event.isShiftDown &&
-            !event.isAltDown
 
     fun unregister() {
         if (!isCleanedUp) {
@@ -68,6 +84,17 @@ class KeyboardShortcutHandler(
         }
     }
 
+    private fun selectStickyBurpTab(pane: JTabbedPane) {
+        for (i in 0 until pane.tabCount) {
+            if (pane.getTitleAt(i).equals("StickyBurp", ignoreCase = true)) {
+                pane.selectedIndex = i
+                api.logging().logToOutput("Successfully switched to StickyBurp tab")
+                return
+            }
+        }
+        api.logging().logToOutput("Could not find StickyBurp tab")
+    }
+
     private fun getMainTabbedPane(): JTabbedPane? {
         for (window in Window.getWindows()) {
             if (window is JFrame) {
@@ -77,21 +104,12 @@ class KeyboardShortcutHandler(
         return null
     }
 
-    private fun selectStickyBurpTab(pane: JTabbedPane) {
-        for (i in 0 until pane.tabCount) {
-            if (pane.getTitleAt(i).equals("StickyBurp", ignoreCase = true)) {
-                pane.selectedIndex = i
-                return
-            }
-        }
-    }
-
     private fun findRootTabbedPane(container: Component): JTabbedPane? {
         if (container is JTabbedPane && isMainTabbedPane(container)) {
             return container
         }
 
-        if (container is java.awt.Container) {
+        if (container is Container) {
             for (component in container.components) {
                 findRootTabbedPane(component)?.let { return it }
             }
