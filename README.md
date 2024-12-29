@@ -97,15 +97,15 @@ A Burp Suite extension written in Kotlin that allows you to create and manage "s
 *Quick stickies replacement in action*
 
 ### Stickies Tab Colorized Default
-![stickyburp table default coloring](public/images/stickyburp-tab-default-color.png)
+![stickyburp table default coloring](public/images/stickyburp-tab-default-color-v1.3.png)
 *Default Stickies Coloring*
 
 ### Stickies Tab Colorized Custom
-![stickyburp coloring](public/images/stickyburp-tab-colorpicker.png)
+![stickyburp coloring](public/images/stickyburp-tab-colorpicker-v1.3.png)
 *Custom Stickies Coloring*
 
 ### Stickies Tab Sorting Functionality
-![stickyburp tabs sorted](public/images/stickyburp-table-sorting.png)
+![stickyburp tabs sorted](public/images/stickyburp-table-sorting-v1.3.png)
 *stickyburp tabs sorted*
 
 ---
