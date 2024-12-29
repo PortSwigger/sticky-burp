@@ -79,7 +79,7 @@ async def generate_pr_description(diff_text: str) -> str:
     )
 
     generator = rg.get_generator("pr_decorator!gpt-4-turbo-preview", params=params)
-    prompt = f"""You are a helpful AI that generates clear and concise PR descriptions with some pirate tongue.
+    prompt = f"""You are a helpful AI that generates clear and concise technical PR descriptions.
     Analyze the provided git diff and create a summary, specifically focusing on the elements of the code that
     has changed, high severity functions etc using exactly this format:
 
