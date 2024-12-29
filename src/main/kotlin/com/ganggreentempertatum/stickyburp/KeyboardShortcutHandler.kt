@@ -13,7 +13,7 @@ import javax.swing.JFrame
 import javax.swing.JTabbedPane
 import javax.swing.SwingUtilities
 
-class KeyboardShortcutHandler(private val api: MontoyaApi) {
+class KeyboardShortcutHandler(private val api: MontoyaApi, private val tab: StickyBurpTab) {
     private var keyEventListener: AWTEventListener? = null
     private var isCleanedUp = false
 
@@ -24,7 +24,6 @@ class KeyboardShortcutHandler(private val api: MontoyaApi) {
                     val isMac = System.getProperty("os.name").lowercase().contains("mac")
                     val modifiersEx = event.modifiersEx
 
-                    // Check for Command (Mac) or Control (Windows/Linux) + Shift + S
                     val isCommandOrControl = if (isMac) {
                         (modifiersEx and InputEvent.META_DOWN_MASK) != 0
                     } else {
@@ -32,19 +31,36 @@ class KeyboardShortcutHandler(private val api: MontoyaApi) {
                     }
 
                     val isShiftDown = (modifiersEx and InputEvent.SHIFT_DOWN_MASK) != 0
-                    val isSKey = event.keyCode == KeyEvent.VK_S
 
-                    if (isCommandOrControl && isShiftDown && isSKey) {
-                        api.logging().logToOutput("""
-                            Hotkey detected!
-                            Platform: ${if (isMac) "Mac" else "Windows/Linux"}
-                            Modifiers: ${getModifiersText(modifiersEx)}
-                            Key: ${KeyEvent.getKeyText(event.keyCode)}
-                        """.trimIndent())
+                    when {
+                        // CMD/CTRL + Shift + S handler
+                        isCommandOrControl && isShiftDown && event.keyCode == KeyEvent.VK_S -> {
+                            api.logging().logToOutput("""
+                                Switch Tab Hotkey detected!
+                                Platform: ${if (isMac) "Mac" else "Windows/Linux"}
+                                Modifiers: ${getModifiersText(modifiersEx)}
+                                Key: ${KeyEvent.getKeyText(event.keyCode)}
+                            """.trimIndent())
 
-                        event.consume()
-                        SwingUtilities.invokeLater {
-                            findAndSelectStickyBurpTab()
+                            event.consume()
+                            SwingUtilities.invokeLater {
+                                findAndSelectStickyBurpTab()
+                            }
+                        }
+
+                        // CMD/CTRL + Shift + A handler
+                        isCommandOrControl && isShiftDown && event.keyCode == KeyEvent.VK_A -> {
+                            api.logging().logToOutput("""
+                                Add Variable Hotkey detected!
+                                Platform: ${if (isMac) "Mac" else "Windows/Linux"}
+                                Modifiers: ${getModifiersText(modifiersEx)}
+                                Key: ${KeyEvent.getKeyText(event.keyCode)}
+                            """.trimIndent())
+
+                            event.consume()
+                            SwingUtilities.invokeLater {
+                                tab.addNewVariable()
+                            }
                         }
                     }
                 }

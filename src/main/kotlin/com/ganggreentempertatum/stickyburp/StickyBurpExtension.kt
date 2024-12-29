@@ -9,7 +9,7 @@ class StickyBurpExtension : BurpExtension {
         val tab = StickyBurpTab(variables, api.persistence())
         val contextMenu = StickyBurpContextMenu(tab, api.logging())
 
-        val keyboardHandler = KeyboardShortcutHandler(api)
+        val keyboardHandler = KeyboardShortcutHandler(api, tab)
         keyboardHandler.register()
 
         api.userInterface().apply {
