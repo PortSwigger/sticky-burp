@@ -273,7 +273,7 @@ class StickyBurpTab(
         saveVariables()
     }
 
-    private fun addNewVariable() {
+    fun addNewVariable() {
         val name = JOptionPane.showInputDialog("Enter sticky name:")
         if (name == null) return
 

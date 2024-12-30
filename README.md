@@ -71,10 +71,17 @@ A Burp Suite extension written in Kotlin that allows you to create and manage "s
   - Protection against duplicate stickies names
   - Validation to prevent empty values
 
+- **Hotkeys/Shortcuts** (**No more clicks!**)
+  - Automatically switch to the StickyBurp tab using "`CMD`"("`Control`" for Windows users)+"`Shift`"+"`S`"
+  - Invoke the keys "`CMD`"("`Control`" for Windows users)+"`Shift`"+"`A`" to add a new Sticky
+
 ## Demo
 
 ![stickyburp v1.0.0 in action](public/gifs/stickyburp.gif)
 *stickyburp in action!*
+
+![stickyburp hotkeys demo](public/gifs/stickyburp-hotkey.gif)
+*stickyburp hotkeys demo*
 
 ## Screenshots
 
@@ -90,15 +97,15 @@ A Burp Suite extension written in Kotlin that allows you to create and manage "s
 *Quick stickies replacement in action*
 
 ### Stickies Tab Colorized Default
-![stickyburp table default coloring](public/images/stickyburp-tab-default-color.png)
+![stickyburp table default coloring](public/images/stickyburp-tab-default-color-v1.3.png)
 *Default Stickies Coloring*
 
 ### Stickies Tab Colorized Custom
-![stickyburp coloring](public/images/stickyburp-tab-colorpicker.png)
+![stickyburp coloring](public/images/stickyburp-tab-colorpicker-v1.3.png)
 *Custom Stickies Coloring*
 
 ### Stickies Tab Sorting Functionality
-![stickyburp tabs sorted](public/images/stickyburp-table-sorting.png)
+![stickyburp tabs sorted](public/images/stickyburp-table-sorting-v1.3.png)
 *stickyburp tabs sorted*
 
 ---
