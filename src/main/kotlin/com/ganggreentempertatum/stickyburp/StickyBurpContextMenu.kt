@@ -58,9 +58,9 @@ class StickyBurpContextMenu(private val tab: StickyBurpTab, private val logging:
                 return@addActionListener
             }
 
-            if (!trimmedName.matches(Regex("^[a-zA-Z0-9_]+$"))) {
+            if (!trimmedName.matches(Regex("^[a-zA-Z0-9_-]+$"))) {
                 JOptionPane.showMessageDialog(null,
-                    "Sticky name can only contain letters, numbers, and underscores",
+                    "Sticky name can only contain letters, numbers, underscores, and hyphens",
                     "Invalid Input",
                     JOptionPane.ERROR_MESSAGE)
                 return@addActionListener
