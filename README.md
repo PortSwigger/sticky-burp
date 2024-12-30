@@ -1,6 +1,6 @@
 # stickyburp
 
-No more `notes.txt`! 🤙
+("`Sticky Burp, Reusable and Replacable Environment Variables`").. No more `notes.txt`! 🤙
 
 A Burp Suite extension written in Kotlin that allows you to create and manage "stickies" (aka Environment Variables) from selected text across different Burp Suite panels. Think of this extension as the same functionality you get in an API testing and development tool to store variables with raw values that can be used across different views.
 
