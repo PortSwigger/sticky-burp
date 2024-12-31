@@ -19,28 +19,45 @@ import burp.api.montoya.http.HttpService
 
 class StickyBurpContextMenu(private val tab: StickyBurpTab, private val logging: Logging) : ContextMenuItemsProvider {
     override fun provideMenuItems(event: ContextMenuEvent): List<JMenuItem> {
-        val messageEditor = event.messageEditorRequestResponse()
-        if (!messageEditor.isPresent) return emptyList()
+        // Try multiple methods to get selected content
+        val selectedContent = when {
+            // Standard message editor (what you currently use)
+            event.messageEditorRequestResponse().isPresent -> {
+                val editor = event.messageEditorRequestResponse().get()
+                val selection = editor.selectionOffsets()
+                if (!selection.isPresent) return emptyList()
 
-        val editor = messageEditor.get()
-        val selection = editor.selectionOffsets()
-        if (!selection.isPresent) return emptyList()
+                if (event.isFrom(InvocationType.MESSAGE_EDITOR_REQUEST, InvocationType.MESSAGE_VIEWER_REQUEST)) {
+                    val request = editor.requestResponse().request()
+                    val range = selection.get()
+                    request.toByteArray().subArray(range).toString()
+                } else {
+                    val response = editor.requestResponse().response()
+                    val range = selection.get()
+                    response.toByteArray().subArray(range).toString()
+                }
+            }
 
-        val selectedText = if (event.isFrom(InvocationType.MESSAGE_EDITOR_REQUEST, InvocationType.MESSAGE_VIEWER_REQUEST)) {
-            val request = editor.requestResponse().request()
-            val range = selection.get()
-            request.toByteArray().subArray(range).toString()
-        } else {
-            val response = editor.requestResponse().response()
-            val range = selection.get()
-            response.toByteArray().subArray(range).toString()
+            // Text editor component
+            event.textComponent().isPresent -> {
+                val textComponent = event.textComponent().get()
+                textComponent.selectedText()
+            }
+
+            // General selection
+            event.selectionOffsets().isPresent -> {
+                val selection = event.selectionOffsets().get()
+                event.selectedData().subArray(selection).toString()
+            }
+
+            else -> null
         }
 
-        if (selectedText.isEmpty()) {
+        if (selectedContent.isNullOrEmpty()) {
             logging.logToOutput("No text selected")
             return emptyList()
         }
-        logging.logToOutput("Selected text: $selectedText")
+        logging.logToOutput("Selected text: $selectedContent")
 
         val mainMenu = JMenu("StickyBurp")
 
@@ -76,8 +93,8 @@ class StickyBurpContextMenu(private val tab: StickyBurpTab, private val logging:
                 if (update != JOptionPane.YES_OPTION) return@addActionListener
             }
 
-            val source = if (messageEditor.isPresent) {
-                val reqRes = messageEditor.get().requestResponse()
+            val source = if (event.messageEditorRequestResponse().isPresent) {
+                val reqRes = event.messageEditorRequestResponse().get().requestResponse()
                 val tool = when (event.invocationType()) {
                     InvocationType.SITE_MAP_TREE,
                     InvocationType.SITE_MAP_TABLE -> "Target"
@@ -129,7 +146,7 @@ class StickyBurpContextMenu(private val tab: StickyBurpTab, private val logging:
 
                 tab.addVariable(StickyVariable(
                     name = trimmedName,
-                    value = selectedText,
+                    value = selectedContent,
                     sourceTab = tool,
                     source = source,
                     timestamp = java.time.LocalDateTime.now().toString()
@@ -144,30 +161,30 @@ class StickyBurpContextMenu(private val tab: StickyBurpTab, private val logging:
         tab.getVariables().forEach { variable ->
             val replaceItem = JMenuItem("${variable.name} (${variable.value})")
             replaceItem.addActionListener {
-                val range = selection.get()
-                val reqRes = editor.requestResponse()
+                val selection = event.selectionOffsets().get()
+                val reqRes = event.messageEditorRequestResponse().get().requestResponse()
 
                 if (event.isFrom(InvocationType.MESSAGE_EDITOR_REQUEST, InvocationType.MESSAGE_VIEWER_REQUEST)) {
                     val request = reqRes.request()
                     val newRequest = HttpRequest.httpRequest(
                         request.httpService(),
                         request.toString().replaceRange(
-                            range.startIndexInclusive(),
-                            range.endIndexExclusive(),
+                            selection.startIndexInclusive(),
+                            selection.endIndexExclusive(),
                             variable.value
                         )
                     )
-                    editor.setRequest(newRequest)
+                    event.messageEditorRequestResponse().get().setRequest(newRequest)
                 } else {
                     val response = reqRes.response()
                     val newResponse = HttpResponse.httpResponse(
                         response.toString().replaceRange(
-                            range.startIndexInclusive(),
-                            range.endIndexExclusive(),
+                            selection.startIndexInclusive(),
+                            selection.endIndexExclusive(),
                             variable.value
                         )
                     )
-                    editor.setResponse(newResponse)
+                    event.messageEditorRequestResponse().get().setResponse(newResponse)
                 }
             }
             replaceMenu.add(replaceItem)
@@ -232,7 +249,7 @@ class StickyBurpContextMenu(private val tab: StickyBurpTab, private val logging:
                 }
 
                 tab.addVariable(existingVar.copy(
-                    value = selectedText,
+                    value = selectedContent,
                     sourceTab = tool,
                     source = source,
                     timestamp = java.time.LocalDateTime.now().toString()
