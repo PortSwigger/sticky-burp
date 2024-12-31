@@ -21,7 +21,7 @@ class StickyBurpExtension : BurpExtension {
         api.http().registerHttpHandler(httpHandler)
 
         api.extension().setName("StickyBurp")
-        api.logging().logToOutput("StickyBurp extension loaded successfully!\n\n\nBrought to you with love by GangGreentempertatum <3\n")
+        api.logging().logToOutput("StickyBurp extension loaded successfully!\n\n\nBrought to you with love by ads, AKA GangGreentempertatum <3\n\nPlease submit any bug reports or feature requests via GitHub and feel free to reach out with any questions.\n")
 
         api.extension().registerUnloadingHandler { keyboardHandler.unregister() }
     }

@@ -19,6 +19,17 @@ import burp.api.montoya.http.HttpService
 
 class StickyBurpContextMenu(private val tab: StickyBurpTab, private val logging: Logging) : ContextMenuItemsProvider {
     override fun provideMenuItems(event: ContextMenuEvent): List<JMenuItem> {
+        // Add support for Intruder context menu
+        val invocationType = event.invocationType()
+        if (!event.messageEditorRequestResponse().isPresent &&
+            invocationType !in listOf(
+                InvocationType.INTRUDER_PAYLOAD_POSITIONS,
+                InvocationType.INTRUDER_ATTACK_RESULTS
+            )
+        ) {
+            return emptyList()
+        }
+
         val messageEditor = event.messageEditorRequestResponse()
         if (!messageEditor.isPresent) return emptyList()
 
