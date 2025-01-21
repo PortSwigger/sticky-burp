@@ -30,11 +30,14 @@ This functionality gives you the power to easily store variables in a table and 
 - Authentication tokens/cookies (ie similar to manually testing autorize)
 - UUIDs, user accounts, emails/PII etc.
 - Dynamically created content from an application's response
+  - IE `SECRET_TOKEN` values (see lab [Lab: Exploiting PHP deserialization with a pre-built gadget chain](https://portswigger.net/web-security/deserialization/exploiting/lab-deserialization-exploiting-php-deserialization-with-a-pre-built-gadget-chain))
 
 Simply highlight the payload content, right-click and either add, update or replace: (_skip to the [demo](./README.md#demo) usage_)
 
 ![stickyburp intro](public/images/stickyburp-intro-readme-usage.png)
-*stickyburp simple use-case!*
+
+![stickyburp intro 2](public/images/stickyburp-intro-readme-usage-2.png)
+*stickyburp simple use-cases!*
 
 ---
 
