@@ -10,6 +10,7 @@ _Sticky Burp, Reusable and Replacable Environment Variables_
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/GangGreenTemperTatum/stickyburp)](https://github.com/GangGreenTemperTatum/stickyburp/releases)
 [![GitHub stars](https://img.shields.io/github/stars/GangGreenTemperTatum/stickyburp?style=social)](https://github.com/GangGreenTemperTatum/stickyburp/stargazers)
 [![BApp Store](https://img.shields.io/badge/BApp%20Store-Submission%20In%20Progress-yellow)](https://portswigger.net/bappstore)
+[![License](https://img.shields.io/github/license/GangGreenTemperTatum/stickyburp?branch=main)](https://github.com/GangGreenTemperTatum/stickyburp/blob/main/LICENSE)
 
 [Report Bug](https://github.com/GangGreenTemperTatum/stickyburp/issues) •
 [Request Feature](https://github.com/GangGreenTemperTatum/stickyburp/issues)
