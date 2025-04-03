@@ -1,0 +1,78 @@
+<p>Create and manage "stickies" (aka Global per-project Environment Variables) from highlighted/selected text across different Burp Suite tabs (think of this extension as the same functionality you get in an API testing and development tool to store variables with raw values that can be used across different views).</p>
+
+<p>This functionality gives you the power to easily store variables in a table and then replace existing payload contents with these variables (ie, in the Repeater or Intruder tab). Common example use-cases for storing and replacing are:</p>
+
+<ul>
+	<li>Exploit Server URL / Collaborator URL</li>
+	<li>Authentication tokens/cookies (ie similar to manually testing autorize)</li>
+	<li>UUIDs, user accounts, emails/PII etc.</li>
+	<li>Dynamically created content from an application's response
+		<ul>
+			<li>i.e. <code class="InlineCode">SECRET_TOKEN</code> values (see Web Security Academy lab: <a href="https://portswigger.net/web-security/deserialization/exploiting/lab-deserialization-exploiting-php-deserialization-with-a-pre-built-gadget-chain">Exploiting PHP deserialization with a pre-built gadget chain</a>)</li>
+		</ul>
+	</li>
+</ul>
+
+<h2>Features</h2>
+
+<h3>Sticky Management</h3>
+
+<ul>
+	<li>Create and store stickies (AKA global environment variables) from any selected text in Burp Suite request/response panes</li>
+	<li>Stickies store name, value, source information and your own notes</li>
+	<li>Replace the values in Repeater tab with the raw value of the previously saved sticky</li>
+	<li>Copy stickies values to clipboard with right-click</li>
+	<li>Stickies can be colored for easier visibility and are by default colored</li>
+	<li><span class="pro-edition-feature-label">Professional:</span> Stickies are persisted across projects even when burp is quit and reopened</li>
+</ul>
+
+<h3>Context Menu Integration</h3>
+
+<ul>
+	<li>Right-click selected text to create new stickies</li>
+	<li>Quick access to update existing stickies</li>
+	<li>Source tracking shows which HTTP request the stickies came from</li>
+	<li>Works in Burp tools for both HTTP Requests and Responses (Proxy, Repeater, Target (Site Map) etc.)</li>
+</ul>
+
+<h3>Dedicated UI Tab</h3>
+
+<ul>
+	<li>Table view of all stored stickies</li>
+	<li>Shows stickies name, value, source and your notes</li>
+</ul>
+
+<h3>Hotkeys/Shortcuts (No more clicks!)</h3>
+
+<ul>
+	<li>Automatically switch to the StickyBurp tab using "<code class="InlineCode">CMD</code>"("<code class="InlineCode">Control</code>" for Windows users)+"<code class="InlineCode">Shift</code>"+"<code class="InlineCode">A</code>" to add a new Sticky</li>
+</ul>
+
+<h2>Usage</h2>
+
+<ol>
+	<li>Creating Stickies:
+		<ul>
+			<li>Select any text in Burp Suite (Proxy, Repeater, etc.)</li>
+			<li>Right-click and choose "Add to stickyburp"</li>
+			<li>Enter a name for your variable</li>
+			<li>The variable will appear in the stickyburp tab</li>
+		</ul>
+	</li>
+	<li>Using Stickies:
+		<ul>
+			<li>Go to the stickyburp tab to view all stored stickies</li>
+			<li>Click on a variable to copy its value</li>
+			<li>Use copied values in any Burp Suite tool (Repeater, Intruder, etc.)</li>
+			<li>Use quick replace to swap values in requests</li>
+		</ul>
+	</li>
+	<li>Managing Stickies:
+		<ul>
+			<li>View all stickies in the table</li>
+			<li>See the source of each variable</li>
+			<li>Copy values directly from the table</li>
+			<li>Add new stickies manually if needed</li>
+		</ul>
+	</li>
+</ol>

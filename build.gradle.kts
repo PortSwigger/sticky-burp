@@ -18,6 +18,7 @@ repositories {
 dependencies {
     compileOnly("net.portswigger.burp.extensions:montoya-api:2024.12")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+    implementation(kotlin("stdlib"))
 }
 
 tasks.test {
@@ -63,4 +64,12 @@ detekt {
         txt.required.set(true)
         sarif.required.set(true)
     }
+}
+
+tasks.shadowJar {
+    archiveClassifier.set("")
+}
+
+tasks.build {
+    dependsOn(tasks.shadowJar)
 }
